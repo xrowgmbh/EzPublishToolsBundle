@@ -1,0 +1,21 @@
+{
+    "name": "xrow/ezpublish-tools-bundle",
+    "repositories": [
+    {
+        "type":"package",
+        "package": {
+          "name": "xrow/svg-icon-font-generator",
+          "version":"master",
+          "source": {
+              "url": "https://github.com/xrowgmbh/SVG-Icon-Font-Generator.git",
+              "type": "git",
+              "reference":"master"
+            }
+        }
+    }
+    ],
+    "require": {
+        "php": ">=5.3.3",
+        "xrow/svg-icon-font-generator": "@dev"
+    }
+}
