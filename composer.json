@@ -1,21 +1,24 @@
 {
     "name": "xrow/ezpublish-tools-bundle",
-    "repositories": [
-    {
-        "type":"package",
-        "package": {
-          "name": "xrow/svg-icon-font-generator",
-          "version":"master",
-          "source": {
-              "url": "https://github.com/xrowgmbh/SVG-Icon-Font-Generator.git",
-              "type": "git",
-              "reference":"master"
-            }
+    "description": "Delivers an icon font generator, ...",
+    "type": "library",
+    "keywords": "icon font, generator, web font",
+    "homepage": "http://www.xrow.de",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "xrow\\SVG\\": "src/SVG/"
         }
-    }
+    },
+    "authors": [
+        {
+            "name": "Björn Dieding",
+            "email": "bjoern@xrow.de",
+            "homepage": "http://www.xrow.de",
+            "role": "Developer"
+        }
     ],
     "require": {
-        "php": ">=5.3.3",
-        "xrow/svg-icon-font-generator": "@dev"
+        "php": ">=5.3.3"
     }
 }
