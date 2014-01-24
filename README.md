@@ -12,4 +12,4 @@ Usage
 
 Iconfont generator
 
-  ezpublish/console tools:buildfont icons-dir/ fonts-dir/
+    ezpublish/console tools:buildfont icons-dir/ fonts-dir/
