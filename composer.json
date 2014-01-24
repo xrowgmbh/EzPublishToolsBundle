@@ -2,7 +2,7 @@
     "name": "xrow/ezpublish-tools-bundle",
     "description": "Delivers an icon font generator, ...",
     "type": "library",
-    "keywords": "icon font, generator, web font",
+    "keywords": [ "icon font", "generator", "web font" ],
     "homepage": "http://www.xrow.de",
     "license": "MIT",
     "authors": [
