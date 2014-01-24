@@ -5,11 +5,6 @@
     "keywords": "icon font, generator, web font",
     "homepage": "http://www.xrow.de",
     "license": "MIT",
-    "autoload": {
-        "psr-4": {
-            "xrow\\SVG\\": "src/SVG/"
-        }
-    },
     "authors": [
         {
             "name": "Björn Dieding",
