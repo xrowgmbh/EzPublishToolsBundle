@@ -53,7 +53,12 @@ class BuildFontCommand extends Command
         $ffscript = realpath(dirname(__FILE__) . "/../SVG/woff.pe");
         
         $svg = $destination . "/" . $basename . ".svg";
+        $css = $destination . "/" . $basename . ".css";
+        $html = $destination . "/" . $basename . ".html";
         file_put_contents( $svg, $generator->getFont()->getXML());
+        file_put_contents( $css, $generator->getCss());
+        file_put_contents( $html, $this->getHTMLFromGenerator( $generator, $svg ) );
+        
         $cmd = "fontforge -script " . $ffscript . " " . $svg;
         //$output->writeln($cmd);
         $retval = null;
@@ -67,7 +72,8 @@ class BuildFontCommand extends Command
         $files[] = new File( $destination . "/" . $basename . ".ttf" );
         $files[] = new File( $destination . "/" . $basename . ".eot" );
         $files[] = new File( $destination . "/" . $basename . ".woff" );
-
+        $files[] = new File( $destination . "/" . $basename . ".css" );
+        $files[] = new File( $destination . "/" . $basename . ".html" );
         if ( $destination )
         {
             foreach ( $files as $file )
@@ -79,5 +85,131 @@ class BuildFontCommand extends Command
         {
             $output->writeln('Created font: ' .$file);
         }
+    }
+    /**
+     * creates the HTML for the info page
+     *
+     * @param  IconFontGenerator $generator icon font generator
+     * @param  string            $fontFile  font file name
+     * @return string                       HTML for the info page
+     */
+    protected function getHTMLFromGenerator(IconFontGenerator $generator, $fontFile){
+    
+        $fontOptions = $generator->getFont()->getOptions();
+    
+        $html = '<!doctype html>
+			<html>
+			<head>
+			<title>'.htmlspecialchars($fontOptions['id']).'</title>
+			<style>
+				@font-face {
+					font-family: "'.$fontOptions['id'].'";
+					src: url("data:image/svg+xml;base64,'.base64_encode(file_get_contents($fontFile)).'") format("svg");
+					font-weight: normal;
+					font-style: normal;
+				}
+				body {
+					font-family: sans-serif;
+					color: #444;
+					line-height: 1.5;
+					font-size: 16px;
+					padding: 20px;
+				}
+				* {
+					-moz-box-sizing: border-box;
+					-webkit-box-sizing: border-box;
+					box-sizing: border-box;
+					margin: 0;
+					paddin: 0;
+				}
+				.glyph{
+					display: inline-block;
+					width: 120px;
+					margin: 10px;
+					text-align: center;
+					vertical-align: top;
+					background: #eee;
+					border-radius: 10px;
+					box-shadow: 1px 1px 5px rgba(0, 0, 0, .2);
+				}
+				.glyph-icon{
+					padding: 10px;
+					display: block;
+					font-family: "'.$fontOptions['id'].'";
+					font-size: 64px;
+					line-height: 1;
+				}
+				.glyph-icon:before{
+					content: attr(data-icon);
+				}
+				.class-name{
+					font-size: 12px;
+				}
+				.glyph > input{
+					display: block;
+					width: 100px;
+					margin: 5px auto;
+					text-align: center;
+					font-size: 12px;
+					cursor: text;
+				}
+				.glyph > input.icon-input{
+					font-family: "'.$fontOptions['id'].'";
+					font-size: 16px;
+					margin-bottom: 10px;
+				}
+			</style>
+			</head>
+			<body>
+			<section id="glyphs">';
+    
+        $glyphNames = $generator->getGlyphNames();
+        asort($glyphNames);
+    
+        foreach($glyphNames as $unicode => $glyph){
+            $html .= '<div class="glyph">
+				<div class="glyph-icon" data-icon="&#x'.$unicode.';"></div>
+				<div class="class-name">icon-'.$glyph.'</div>
+				<input type="text" readonly="readonly" value="&amp;#x'.$unicode.';" />
+				<input type="text" readonly="readonly" value="\\'.$unicode.'" />
+				<input type="text" readonly="readonly" value="&#x'.$unicode.';" class="icon-input" />
+			</div>';
+        }
+    
+        $html .= '</section>
+			</body>
+		</html>';
+    
+        return $html;
+    
+    }
+    
+    /**
+     * creates a HTML list
+     *
+     * @param  IconFontGenerator $generator icon font generator
+     * @param  string            $fontFile  font file name
+     * @return string                       HTML unordered list
+     */
+    protected function getHTMLListFromGenerator(IconFontGenerator $generator, $fontFile){
+    
+        $fontOptions = $generator->getFont()->getOptions();
+    
+        $html = '<ul>';
+    
+        $glyphNames = $generator->getGlyphNames();
+        asort($glyphNames);
+    
+        foreach($glyphNames as $unicode => $glyph){
+            $html .= "\n\t" .
+                '<li data-icon="&#x'.$unicode.';" title="' .
+                htmlspecialchars($glyph) . '">' .
+                htmlspecialchars($glyph) . '</li>';
+        }
+    
+        $html .= "\n" . '</ul>' . "\n";
+    
+        return $html;
+    
     }
 }
