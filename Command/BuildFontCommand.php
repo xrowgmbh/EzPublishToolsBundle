@@ -7,6 +7,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\HttpFoundation\File\File;
+use Symfony\Component\Filesystem\Filesystem;
 use xrow\SVG\IconFontGenerator;
 
 class BuildFontCommand extends Command
@@ -23,6 +24,7 @@ class BuildFontCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $fs = new Filesystem();
         $directory = $input->getArgument('source');
         if (! is_dir($directory)) {
             throw new \Exception("Source directory $path isn't a directory.");
@@ -40,22 +42,38 @@ class BuildFontCommand extends Command
             throw new \Exception("Destination directory $destination isn't writeable.");
         }
         $basename = 'icon-font';
-        
+        $temp_dir = sys_get_temp_dir() . '/font.tmp.' . mt_rand();
+        $fs->mkdir( $temp_dir, 0700 );
         $generator = new IconFontGenerator();
         $output->writeln('reading .svg icons from "' . $directory . '" ...');
         
+        
         $generator->generateFromDir($directory, array(), true);
         
-        $ffscript = realpath(dirname(__FILE__) . "/../src/SVG/woff.pe");
+        $ffscriptdir = realpath(dirname(__FILE__) . "/../src/SVG");
         
-        $svg = $destination . "/" . $basename . ".svg";
-        $css = $destination . "/" . $basename . ".css";
-        $html = $destination . "/" . $basename . ".html";
+        $svg = $temp_dir . "/" . $basename . ".svg";
+        $css = $temp_dir . "/" . $basename . ".css";
+        $html = $temp_dir . "/" . $basename . ".html";
         file_put_contents($svg, $generator->getFont()->getXML());
         file_put_contents($css, $generator->getCss());
         file_put_contents($html, $this->getHTMLFromGenerator($generator, $svg));
         
-        $cmd = "fontforge -script " . $ffscript . " " . $svg;
+        $cmd = "fontforge -script " . $ffscriptdir . "/woff.pe " . $svg;
+        
+        $retval = null;
+        system($cmd, $retval);
+        if ($retval !== 0) {
+            throw new \Exception("Error creating fonts with fontforge");
+        }
+        $cmd = "fontforge -script " . $ffscriptdir . "/ttf.pe " . $svg;
+        var_dump($cmd);
+        $retval = null;
+        system($cmd, $retval);
+        if ($retval !== 0) {
+            throw new \Exception("Error creating fonts with fontforge");
+        }
+        $cmd = "fontforge -script " . $ffscriptdir . "/eot.pe " . $svg;
         
         $retval = null;
         system($cmd, $retval);
@@ -63,17 +81,19 @@ class BuildFontCommand extends Command
             throw new \Exception("Error creating fonts with fontforge");
         }
         $files = array();
-        $files[] = new File($destination . "/" . $basename . ".svg");
-        $files[] = new File($destination . "/" . $basename . ".ttf");
-        $files[] = new File($destination . "/" . $basename . ".eot");
-        $files[] = new File($destination . "/" . $basename . ".woff");
-        $files[] = new File($destination . "/" . $basename . ".css");
-        $files[] = new File($destination . "/" . $basename . ".html");
+        $files[] = new File($temp_dir . "/" . $basename . ".svg");
+        $files[] = new File($temp_dir . "/" . $basename . ".ttf");
+        $files[] = new File($temp_dir . "/" . $basename . ".eot");
+        $files[] = new File($temp_dir . "/" . $basename . ".woff");
+        $files[] = new File($temp_dir . "/" . $basename . ".css");
+        $files[] = new File($temp_dir . "/" . $basename . ".html");
+        
         if ($destination) {
             foreach ($files as $file) {
                 $file->move($input->getArgument('destination'));
             }
         }
+        $fs->remove($temp_dir);
         foreach ($files as $file) {
             $output->writeln('Created font: ' . $file);
         }

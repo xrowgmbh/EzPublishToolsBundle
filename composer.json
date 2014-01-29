@@ -14,7 +14,7 @@
         }
     ],
     "autoload": {
-        "psr-4": { "xrow\\Bundle\\EzPublishToolsBundle\\": "", "xrow\\SVG\\": "src/" }
+        "psr-4": { "xrow\\Bundle\\EzPublishToolsBundle\\": "", "xrow\\SVG\\": "src/SVG/" }
     },
     "require": {
         "php": ">=5.3.3"
