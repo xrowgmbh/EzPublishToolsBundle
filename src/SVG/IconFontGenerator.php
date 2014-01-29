@@ -6,7 +6,7 @@
  * file that was distributed with this source code.
  */
 
-namespace xrow\Bundle\EzPublishToolsBundle\SVG;
+namespace xrow\SVG;
 
 /**
  * SVG Icon Font Generator

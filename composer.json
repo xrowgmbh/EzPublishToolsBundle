@@ -13,6 +13,9 @@
             "role": "Developer"
         }
     ],
+    "autoload": {
+        "psr-4": { "xrow\\Bundle\\EzPublishToolsBundle\\": "", "xrow\\SVG\\": "src/" }
+    },
     "require": {
         "php": ">=5.3.3"
     }

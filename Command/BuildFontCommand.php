@@ -7,7 +7,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\HttpFoundation\File\File;
-use xrow\Bundle\EzPublishToolsBundle\SVG\IconFontGenerator;
+use xrow\SVG\IconFontGenerator;
 
 class BuildFontCommand extends Command
 {
@@ -46,7 +46,7 @@ class BuildFontCommand extends Command
         
         $generator->generateFromDir($directory, array(), true);
         
-        $ffscript = realpath(dirname(__FILE__) . "/../SVG/woff.pe");
+        $ffscript = realpath(dirname(__FILE__) . "/../src/SVG/woff.pe");
         
         $svg = $destination . "/" . $basename . ".svg";
         $css = $destination . "/" . $basename . ".css";
