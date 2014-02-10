@@ -17,4 +17,13 @@
         </service>
     </services>
     -->
+    <parameters>
+        <parameter key="remote_profiler.debug_listener.class">xrow\Bundle\EzPublishToolsBundle\EventListener\LogStashListener</parameter>
+    </parameters>
+
+    <services>
+        <service id="remote_profiler.debug_listener" class="%remote_profiler.debug_listener.class%">
+            <tag name="kernel.event_subscriber" />
+        </service>
+    </services>
 </container>

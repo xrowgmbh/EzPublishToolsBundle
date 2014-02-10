@@ -1,5 +1,5 @@
 <?php
-namespace xrow\Bundle\EzpublishToolsBundle\Command;
+namespace xrow\Bundle\EzPublishToolsBundle\Command;
 
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
